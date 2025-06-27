@@ -1,75 +1,87 @@
 <h2>Reactivos: <small> Dinámicos </small></h2>
 <hr>
 
-<form autocomplete="off">
+<form autocomplete="off" [formGroup]="myForm" (ngSubmit)="onsubmit()">
 
-    <!-- Nombre -->
-    <div class="mb-3 row">
-        <label class="col-sm-3 col-form-label">Nombre</label>
-        <div class="col-sm-9">
-            <input class="form-control"
-                   placeholder="Nombre de la persona">
-            <span class="form-text text-danger">
-                   error message
-            </span>
-        </div>
+  <!-- Nombre -->
+  <div class="mb-3 row">
+    <label class="col-sm-3 col-form-label">Nombre</label>
+    <div class="col-sm-9">
+      <input class="form-control" placeholder="Nombre de la persona" formControlName="name">
+
+      @if (formUtils.isValidField(myForm, 'name')) {
+      <span class="form-text text-danger">
+        {{formUtils.getFieldError(myForm, 'name')}}
+      </span>
+      }
+
     </div>
+  </div>
 
-    <!-- Agregar Favorito -->
-    <div class="mb-3 row">
-        <label class="col-sm-3 col-form-label">Agregar</label>
-        <div class="col-sm-9">
+  <!-- Agregar Favorito -->
+  <div class="mb-3 row">
+    <label class="col-sm-3 col-form-label">Agregar</label>
+    <div class="col-sm-9">
 
-            <div class="input-group">
-                <input class="form-control"
-                       placeholder="Agregar favorito">
+      <div class="input-group">
+        <input class="form-control" placeholder="Agregar favorito" [formControl]="newFavoriteGame"
+          (keydown.enter)="addFavoriteGame()" (keydown)="$event.preventDefault()">
 
 
-                <button class="btn btn-outline-primary"
-                        type="button">
-                    Agregar favorito
-                </button>
-            </div>
-        </div>
+
+        <button class="btn btn-outline-primary" type="button" (click)="addFavoriteGame()">
+          Agregar favorito
+        </button>
+      </div>
     </div>
+  </div>
 
 
-    <!-- Lista de Juegos Favoritos -->
-    <div class="mb-3 row">
-        <label class="col-sm-3 col-form-label">Favoritos</label>
-        <div class="col-sm-9">
+  <!-- Lista de Juegos Favoritos -->
+  <div class="mb-3 row">
+    <label class="col-sm-3 col-form-label">Favoritos</label>
+    <div class="col-sm-9" formArrayName="myFavoriteGame">
+      @for (favoriteG of myFavoriteGame.controls; track $index; let i= $index) {
+      <div class="mb-1">
 
-            <div class="mb-1">
+        <div class="input-group">
+          <input class="form-control" [formControlName]="i">
 
-                <div class="input-group">
-                    <input class="form-control">
-
-                    <button class="btn btn-outline-danger"
-                            type="button">
-                      Eliminar
-                  </button>
-                </div>
-                <span class="form-text text-danger">
-                   Este campo es requerido
-                </span>
-
-            </div>
-
+          <button class="btn btn-outline-danger" type="button"  (click)="removeFavoriteGame(i)">
+            Eliminar
+          </button>
         </div>
+        @if (formUtils.isValidFormField(myFavoriteGame,i)) {
+
+        <span class="form-text text-danger">
+          {{formUtils.getFormFieldErrorArray(myFavoriteGame, i)}}
+        </span>
+
+        }
+
+
+      </div>
+      }
+       @if (formUtils.isValidField(myForm, 'myFavoriteGame')) {
+      <span class="form-text text-danger">
+        Debe agregar mas de dos juego favorito
+      </span>
+      }
+
+
     </div>
+  </div>
 
 
 
-    <div class="row">
-        <div class="col-sm-12">
-            <button type="submit"
-                    class="btn btn-primary float-end"
-                    >
-                    <!-- [disabled]="myForm.invalid" -->
-                Guardar
-            </button>
-        </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <button type="submit" class="btn btn-primary float-end"  [disabled]="myForm.invalid">
+
+        Guardar
+      </button>
     </div>
+  </div>
 
 
 </form>
